@@ -58,7 +58,7 @@ export default function PaymentPanel({ user, onPaid, onNotice }) {
         <p className="eyebrow">Enrollment</p>
         <h2>Complete payment to unlock Week 1</h2>
         <p className="muted">
-          After payment, Database records your enrollment. Week 1 opens
+          After payment, The Database records your enrollment. Week 1 opens
           immediately, and later weeks open every 7 days after passing the
           previous quiz.
         </p>
