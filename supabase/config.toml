@@ -1,0 +1,13 @@
+project_id = "titogems-course-platform"
+
+[functions.verify-paystack]
+verify_jwt = true
+
+[functions.get-material-url]
+verify_jwt = true
+
+[functions.get-quiz]
+verify_jwt = true
+
+[functions.submit-quiz]
+verify_jwt = true
