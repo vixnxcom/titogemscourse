@@ -1,10 +1,50 @@
+@font-face {
+  font-family: "Gallant";
+  src: url("../fonts/Gallantbold.otf") format("opentype");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("../fonts/Montserrat-Light.ttf") format("truetype");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 300;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("../fonts/Montserrat-Regular.ttf") format("truetype");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("../fonts/Montserrat-Medium.ttf") format("truetype");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("../fonts/Montserrat-Bold.ttf") format("truetype");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 700;
+}
+
 :root {
   color-scheme: light;
-  font-family:
-    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+  font-family: "Montserrat", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
+  font-weight: 400;
   color: #17211d;
-  background: #f6f2ea;
+  background: #fff;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -14,14 +54,58 @@
   box-sizing: border-box;
 }
 
+
+.bg-blue{
+background:#E0E7FF ;
+}
+
+ .bg-gry{
+    background-color: #f1f1f1 ;
+  }
+ .gry{
+  color:#E0E7FF ;
+  opacity: 80%;
+  }
+ .grry{
+  color:#2a2a2a ;
+  opacity: 80%;
+  }
+
+  
+.head{
+  color: #7774ff;
+}
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0)),
-    #f6f2ea;
+   background: linear-gradient(163.33deg, #02013A 10.22%, #0603A0 88.48%);  
+
 }
+
+.gallant-bold{
+  font-family: "Gallant", "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+.neue-light{
+  font-family: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  font-weight: 500;
+  color: #3a3a3a;
+}
+.neue-reg{
+  font-family: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  font-weight: 500;
+  color: #3a3a3a;
+}
+
+
+.bg-welcome{ 
+background: linear-gradient(163.33deg, #02013A 10.22%, #0603A0 88.48%);
+}
+
+
+
 
 button,
 input {
@@ -101,6 +185,7 @@ button:disabled {
   grid-template-columns: minmax(0, 1.1fr) minmax(320px, 440px);
   align-items: center;
   gap: 40px;
+  /* background-color: #025e1c; */
 }
 
 .auth-panel h1,
@@ -122,7 +207,15 @@ button:disabled {
 
 .eyebrow {
   margin: 0;
-  color: #1f8a70;
+  color:#0603A0;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+.eyebroww {
+  margin: 0;
+  color:#E0E7FF ;
   font-size: 0.78rem;
   font-weight: 800;
   letter-spacing: 0;
@@ -206,7 +299,7 @@ button:disabled {
 .primary-button {
   padding: 0 16px;
   color: #fff;
-  background: #1f8a70;
+  background: linear-gradient(33.33deg, #025e1c 19.83%, #0de405 161.18%); 
 }
 
 .primary-button:hover:not(:disabled),
@@ -220,9 +313,9 @@ button:disabled {
 
 .secondary-button {
   padding: 0 14px;
-  color: #183c34;
+  color: #f1f1f1;
   border-color: #bad7ce;
-  background: #e9f5f1;
+  background: linear-gradient(163.33deg, #02013A 10.22%, #0603A0 88.48%);
 }
 
 .ghost-button {
@@ -303,7 +396,7 @@ button:disabled {
   padding: 28px;
   border: 1px solid #dfd9c7;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.7);
+  background: #fff;
 }
 
 .header-actions {
@@ -328,8 +421,9 @@ button:disabled {
   padding: 16px;
   border: 1px solid #e0dac8;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.76);
+  background: #f1f1f1;
 }
+
 
 .metric span {
   color: #60716a;
@@ -364,11 +458,12 @@ button:disabled {
   padding: 18px;
   border: 1px solid #ded9ca;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.84);
+ /* background:#E0E7FF ; */
+ background:#ffff ;
 }
 
 .week-card.is-locked {
-  background: rgba(251, 248, 240, 0.84);
+  background:#f4f6fd ;
 }
 
 .week-card-header {
@@ -379,7 +474,7 @@ button:disabled {
 }
 
 .week-kicker {
-  color: #bf6b3a;
+  color: #0de405 ;
   font-size: 0.78rem;
   font-weight: 900;
   text-transform: uppercase;
@@ -409,13 +504,13 @@ button:disabled {
 }
 
 .status-pill.open {
-  color: #0f5f4d;
-  background: #dff3ec;
+  color:#025e1c ;
+  background: #8cff88 ;
 }
 
 .status-pill.locked {
-  color: #6a4d12;
-  background: #f8e9bd;
+  color: #818181;
+  background: #f1f1f1;
 }
 
 .material-grid {
@@ -429,7 +524,7 @@ button:disabled {
   padding: 0 10px;
   color: #273630;
   border-color: #d8d4c7;
-  background: #fffdf8;
+  background: #f1f1f1;
 }
 
 .week-footer {
@@ -442,7 +537,7 @@ button:disabled {
   width: 100%;
   padding: 0 12px;
   color: #fff;
-  background: #263a5f;
+   background: linear-gradient(33.33deg, #025e1c 19.83%, #0de405 161.18%); 
 }
 
 .lock-note {
@@ -479,7 +574,7 @@ button:disabled {
   padding: 16px;
   border: 1px solid #e0dac8;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.78);
+  background: #f1f1f1;
   box-shadow: 0 18px 45px rgba(34, 39, 31, 0.08);
 }
 

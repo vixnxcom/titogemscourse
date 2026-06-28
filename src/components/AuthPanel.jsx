@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { Mail, Send } from "lucide-react";
 
+
+
+
 export default function AuthPanel({ onSubmit, message }) {
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -15,9 +18,10 @@ export default function AuthPanel({ onSubmit, message }) {
   return (
     <section className="auth-panel">
       <div>
-        <p className="eyebrow">Student login</p>
-        <h1>Access your weekly course plan</h1>
-        <p className="muted">
+       
+        <p className="eyebroww">Titogems Student login</p>
+        <h1 className="gallant-bold head">Access your weekly course plan -  </h1>
+        <p className="gry">
           Enter the email you will use for payment and course access. Students
           need an account so quiz progress and weekly unlocks stay attached to
           the right person.

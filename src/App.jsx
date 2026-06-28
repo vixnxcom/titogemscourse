@@ -9,6 +9,21 @@ import { useStudentProfile } from "./hooks/useStudentProfile";
 import { useSupabaseSession } from "./hooks/useSupabaseSession";
 import { supabase } from "./lib/supabase";
 
+async function getFunctionErrorMessage(error, fallback) {
+  const response = error?.context;
+
+  if (response && typeof response.json === "function") {
+    try {
+      const body = await (typeof response.clone === "function" ? response.clone() : response).json();
+      return body?.error || body?.message || fallback;
+    } catch {
+      return fallback;
+    }
+  }
+
+  return error?.message || fallback;
+}
+
 export default function App() {
   const auth = useSupabaseSession();
   const course = useCourseData(auth.user);
@@ -29,7 +44,18 @@ export default function App() {
     });
 
     if (error) {
-      setNotice(error.message || "Could not open material.");
+      const message = await getFunctionErrorMessage(error, "Could not open material.");
+      setNotice(message);
+      return;
+    }
+
+    if (data?.error) {
+      setNotice(data.error);
+      return;
+    }
+
+    if (!data?.url) {
+      setNotice("This material link is not configured yet.");
       return;
     }
 
@@ -58,7 +84,7 @@ export default function App() {
   }
 
   return (
-    <div className="app-shell">
+    <div className="app-shell ">
       {notice ? (
         <div className="notice" role="status">
           <AlertCircle size={18} aria-hidden="true" />

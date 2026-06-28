@@ -26,15 +26,15 @@ export default function CourseDashboard({
   );
 
   return (
-    <main className="dashboard-shell">
+    <main className="dashboard-shell ">
       <section className="course-header">
         <div className="course-cover">
           <img src="/course-cover.png" alt="" />
         </div>
         <div className="course-summary">
           <p className="eyebrow">{demoMode ? "Demo mode" : "Student portal"}</p>
-          <h1>TitoGems weekly course plan</h1>
-          <p className="muted">
+          <h1 className="gallant-bold">TitoGems weekly course plan</h1>
+          <p className="grry">
             Weekly lessons unlock on schedule. Each quiz must be passed before
             the next week's materials become available.
           </p>
@@ -76,7 +76,7 @@ export default function CourseDashboard({
         <div className="metric">
           <CalendarDays size={20} aria-hidden="true" />
           <span>Student</span>
-          <strong>{user?.email || "Preview"}</strong>
+          <strong >{user?.email || "Preview"}</strong>
         </div>
       </section>
 
@@ -94,7 +94,7 @@ export default function CourseDashboard({
           ))}
         </section>
         <div className="sidebar-stack">
-          <SetupChecklist demoMode={demoMode} />
+          {/* <SetupChecklist demoMode={demoMode} /> */}
           <DriveAccessPanel
             demoMode={demoMode}
             profile={profile}
