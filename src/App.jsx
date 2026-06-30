@@ -124,12 +124,14 @@ export default function App() {
           user={auth.user}
           enrollment={course.enrollment}
           attempts={course.attempts}
+          activitySubmissions={course.activitySubmissions}
           demoMode={course.demoMode}
           loading={course.loading}
           profile={studentProfile.profile}
           profileSaving={studentProfile.saving}
           onOpenMaterial={openMaterial}
           onStartQuiz={setActiveQuizWeek}
+          onSubmitActivity={course.submitActivity}
           onRefresh={course.refresh}
           onSignOut={auth.signOut}
           onSaveGoogleEmail={studentProfile.saveGoogleEmail}

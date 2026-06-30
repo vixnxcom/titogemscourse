@@ -17,7 +17,13 @@ export function hasPassedWeek(attempts, weekNumber) {
   );
 }
 
-export function getWeekAccess(week, enrollment, attempts, now = new Date()) {
+export function hasSubmittedActivity(activitySubmissions, weekNumber) {
+  return activitySubmissions.some(
+    (submission) => submission.weekNumber === weekNumber
+  );
+}
+
+export function getWeekAccess(week, enrollment, attempts, activitySubmissions = [], now = new Date()) {
   if (!enrollment || enrollment.status !== "active") {
     return {
       unlocked: false,
@@ -32,8 +38,10 @@ export function getWeekAccess(week, enrollment, attempts, now = new Date()) {
   const timeReached = unlockDate ? unlockDate <= now : false;
   const previousQuizPassed =
     week.weekNumber === 1 || hasPassedWeek(attempts, week.weekNumber - 1);
+  const previousActivitySubmitted =
+    week.weekNumber === 1 || hasSubmittedActivity(activitySubmissions, week.weekNumber - 1);
 
-  if (timeReached && previousQuizPassed) {
+  if (timeReached && previousQuizPassed && previousActivitySubmitted) {
     return {
       unlocked: true,
       status: "open",
@@ -50,6 +58,9 @@ export function getWeekAccess(week, enrollment, attempts, now = new Date()) {
   if (!previousQuizPassed) {
     reasons.push(`Pass Week ${week.weekNumber - 1} quiz first`);
   }
+  if (!previousActivitySubmitted) {
+    reasons.push(`Submit Week ${week.weekNumber - 1} activity first`);
+  }
 
   return {
     unlocked: false,
@@ -60,17 +71,30 @@ export function getWeekAccess(week, enrollment, attempts, now = new Date()) {
   };
 }
 
-export function getCourseProgress(attempts) {
+export function getCourseProgress(attempts, activitySubmissions = []) {
   const passedCount = courseWeeks.filter((week) =>
     hasPassedWeek(attempts, week.weekNumber)
+  ).length;
+  const submittedCount = courseWeeks.filter((week) =>
+    hasSubmittedActivity(activitySubmissions, week.weekNumber)
+  ).length;
+  const completedCount = courseWeeks.filter((week) =>
+    hasPassedWeek(attempts, week.weekNumber) &&
+    hasSubmittedActivity(activitySubmissions, week.weekNumber)
   ).length;
 
   return {
     passedCount,
+    submittedCount,
+    completedCount,
     totalWeeks: courseWeeks.length,
-    percent: Math.round((passedCount / courseWeeks.length) * 100),
+    percent: Math.round((completedCount / courseWeeks.length) * 100),
     nextWeek:
-      courseWeeks.find((week) => !hasPassedWeek(attempts, week.weekNumber)) ||
+      courseWeeks.find(
+        (week) =>
+          !hasPassedWeek(attempts, week.weekNumber) ||
+          !hasSubmittedActivity(activitySubmissions, week.weekNumber)
+      ) ||
       courseWeeks[courseWeeks.length - 1],
   };
 }
