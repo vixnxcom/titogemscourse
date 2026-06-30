@@ -36,17 +36,40 @@ export function useSupabaseSession() {
 
   const actions = useMemo(
     () => ({
-      async signInWithEmail(email) {
+      async submitAuth({ mode, email, password }) {
         if (!hasSupabaseConfig) {
           setAuthMessage("Supabase is not configured yet. The app is in demo mode.");
           return;
         }
 
-        const { error } = await supabase.auth.signInWithOtp({
-          email,
-          options: {
-            emailRedirectTo: window.location.origin,
-          },
+        const normalizedEmail = email.trim().toLowerCase();
+
+        if (mode === "signUp") {
+          const { data, error } = await supabase.auth.signUp({
+            email: normalizedEmail,
+            password,
+            options: {
+              emailRedirectTo: window.location.origin,
+            },
+          });
+
+          if (error) {
+            setAuthMessage(error.message);
+            return;
+          }
+
+          if (data.session) {
+            setAuthMessage("Account created. You can continue to payment.");
+            return;
+          }
+
+          setAuthMessage("Check your email to verify your account, then return and sign in with your password.");
+          return;
+        }
+
+        const { error } = await supabase.auth.signInWithPassword({
+          email: normalizedEmail,
+          password,
         });
 
         if (error) {
@@ -54,7 +77,7 @@ export function useSupabaseSession() {
           return;
         }
 
-        setAuthMessage("Check your email for the login link.");
+        setAuthMessage("Signed in. Continue to payment.");
       },
       async signOut() {
         if (hasSupabaseConfig) {

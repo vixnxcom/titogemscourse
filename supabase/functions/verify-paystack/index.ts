@@ -63,7 +63,7 @@ Deno.serve(async (req) => {
     const verification = await verifyResponse.json();
 
     if (!verifyResponse.ok || !verification.status) {
-      return json({ error: "Paystack could not verify this payment." }, 400);
+      return json({ error: verification.message || "Paystack could not verify this payment." }, 400);
     }
 
     const transaction = verification.data;
@@ -72,11 +72,15 @@ Deno.serve(async (req) => {
       return json({ error: "Payment was not successful." }, 400);
     }
 
+    if (transaction.reference !== reference) {
+      return json({ error: "Payment reference does not match this checkout session." }, 400);
+    }
+
     if (Number(transaction.amount) !== expectedAmount) {
       return json({ error: "Payment amount does not match the course price." }, 400);
     }
 
-    if (transaction.currency !== expectedCurrency) {
+    if (String(transaction.currency).toUpperCase() !== expectedCurrency.toUpperCase()) {
       return json({ error: "Payment currency does not match the course currency." }, 400);
     }
 

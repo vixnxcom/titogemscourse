@@ -76,15 +76,20 @@ export default function App() {
 
   if (auth.loading || course.loading) {
     return (
-      <div className="app-shell centered">
+      <div className="app-shell centered portal-shell">
         <div className="loading-dot" aria-hidden="true" />
         <p>Loading course portal...</p>
       </div>
     );
   }
 
+  const showAuth = !course.demoMode && !auth.user;
+  const shellClassName = showAuth
+    ? "app-shell welcome-shell bg-welcome"
+    : "app-shell portal-shell";
+
   return (
-    <div className="app-shell ">
+    <div className={shellClassName}>
       {notice ? (
         <div className="notice" role="status">
           <AlertCircle size={18} aria-hidden="true" />
@@ -95,8 +100,15 @@ export default function App() {
         </div>
       ) : null}
 
-      {!course.demoMode && !auth.user ? (
-        <AuthPanel onSubmit={auth.signInWithEmail} message={auth.authMessage} />
+      {!notice && course.error ? (
+        <div className="notice" role="alert">
+          <AlertCircle size={18} aria-hidden="true" />
+          <span>{course.error}</span>
+        </div>
+      ) : null}
+
+      {showAuth ? (
+        <AuthPanel onSubmit={auth.submitAuth} message={auth.authMessage} />
       ) : null}
 
       {!course.demoMode && auth.user && !course.enrollment ? (

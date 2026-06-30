@@ -79,7 +79,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-   background: linear-gradient(163.33deg, #02013A 10.22%, #0603A0 88.48%);  
+  background: #fff;
 
 }
 
@@ -125,6 +125,18 @@ button:disabled {
   width: min(1180px, calc(100% - 32px));
   margin: 0 auto;
   padding: 24px 0 40px;
+}
+
+.app-shell.welcome-shell {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 24px max(16px, calc((100vw - 1180px) / 2)) 40px;
+}
+
+.app-shell.portal-shell {
+  min-height: 100vh;
+  background: #fff;
 }
 
 .app-shell.centered {
@@ -244,10 +256,43 @@ button:disabled {
   padding: 24px;
 }
 
+.welcome-shell .auth-form {
+  background: rgba(255, 255, 255, 0.96);
+}
+
+.auth-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  padding: 4px;
+  border: 1px solid #d8d4c7;
+  border-radius: 8px;
+  background: #f5f6fb;
+}
+
+.auth-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  border: 0;
+  border-radius: 6px;
+  color: #4d5868;
+  background: transparent;
+  font-weight: 800;
+}
+
+.auth-tab.is-active {
+  color: #fff;
+  background: #0603a0;
+}
+
 .payment-panel {
   min-height: auto;
   grid-template-columns: 1fr;
   padding: 28px;
+  background: #fff;
 }
 
 .auth-form label {
@@ -329,6 +374,10 @@ button:disabled {
   margin: 0;
   color: #1f8a70;
   font-weight: 700;
+}
+
+.form-message.error {
+  color: #9f2f20;
 }
 
 .price-box {
