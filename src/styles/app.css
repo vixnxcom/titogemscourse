@@ -576,88 +576,6 @@ button:disabled {
   background: #f1f1f1;
 }
 
-.activity-upload {
-  display: grid;
-  gap: 10px;
-  padding: 12px;
-  border: 1px solid #dfe5de;
-  border-radius: 8px;
-  background: #fbfcfb;
-}
-
-.activity-upload-header,
-.completion-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.activity-upload-header span,
-.completion-row span {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.activity-upload-header span {
-  color: #273630;
-  font-weight: 800;
-}
-
-.activity-upload-header strong {
-  flex: 0 0 auto;
-  font-size: 0.78rem;
-  text-transform: uppercase;
-}
-
-.activity-upload-header strong.complete {
-  color: #025e1c;
-}
-
-.activity-upload-header strong.pending {
-  color: #7c5f25;
-}
-
-.activity-file-picker {
-  display: grid;
-  gap: 6px;
-  color: #42504a;
-  font-size: 0.9rem;
-  font-weight: 700;
-}
-
-.activity-file-picker input {
-  width: 100%;
-  min-width: 0;
-  padding: 9px;
-  border: 1px dashed #bfc9c1;
-  border-radius: 8px;
-  background: #fff;
-}
-
-.activity-file-picker span {
-  min-width: 0;
-  overflow: hidden;
-  color: #60716a;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.activity-upload .secondary-button {
-  width: 100%;
-}
-
-.completion-row {
-  color: #7b8580;
-  font-size: 0.82rem;
-  font-weight: 800;
-}
-
-.completion-row .done {
-  color: #025e1c;
-}
-
 .week-footer {
   display: grid;
   gap: 10px;
@@ -784,6 +702,13 @@ button:disabled {
 .question-list {
   display: grid;
   gap: 14px;
+}
+
+.quiz-pass-note {
+  margin: -8px 0 0;
+  color: #60716a;
+  font-size: 0.9rem;
+  font-weight: 700;
 }
 
 .question-block {

@@ -15,6 +15,9 @@ export default function QuizPanel({
   const [questions, setQuestions] = useState(demoMode ? demoQuizQuestions[week.weekNumber] || [] : []);
   const [answers, setAnswers] = useState({});
   const [result, setResult] = useState(null);
+  const [passingScore, setPassingScore] = useState(PASSING_SCORE);
+  const [quizAvailable, setQuizAvailable] = useState(demoMode);
+  const [quizMessage, setQuizMessage] = useState("");
 
   useEffect(() => {
     if (demoMode) return;
@@ -33,10 +36,14 @@ export default function QuizPanel({
 
       if (error) {
         onNotice(error.message || "Could not load quiz.");
+        setQuizAvailable(false);
         setLoading(false);
         return;
       }
 
+      setPassingScore(Number(data?.quiz?.passingScore || PASSING_SCORE));
+      setQuizAvailable(data?.available !== false);
+      setQuizMessage(data?.message || "");
       setQuestions(data.questions || []);
       setLoading(false);
     }
@@ -54,6 +61,7 @@ export default function QuizPanel({
   );
 
   function selectAnswer(questionId, optionIndex) {
+    setResult(null);
     setAnswers((current) => ({
       ...current,
       [questionId]: optionIndex,
@@ -73,8 +81,8 @@ export default function QuizPanel({
         (question) => answers[question.id] === question.correctOptionIndex
       ).length;
       const scorePercent = Math.round((correct / questions.length) * 100);
-      const passed = scorePercent >= PASSING_SCORE;
-      setResult({ scorePercent, passed });
+      const passed = scorePercent >= passingScore;
+      setResult({ scorePercent, passed, passingScore });
       onPassed(week.weekNumber, scorePercent, passed);
       setSubmitting(false);
       return;
@@ -111,10 +119,14 @@ export default function QuizPanel({
           </button>
         </div>
 
+        {!loading && quizAvailable ? (
+          <p className="quiz-pass-note">Pass mark: {passingScore}%</p>
+        ) : null}
+
         {loading ? <p className="muted">Loading quiz...</p> : null}
 
-        {!loading && questions.length === 0 ? (
-          <p className="muted">No quiz questions are available for this week yet.</p>
+        {!loading && (!quizAvailable || questions.length === 0) ? (
+          <p className="muted">{quizMessage || "This quiz is not available yet."}</p>
         ) : null}
 
         <div className="question-list">
@@ -156,7 +168,7 @@ export default function QuizPanel({
           <button
             className="primary-button"
             type="button"
-            disabled={!allAnswered || submitting || Boolean(result?.passed)}
+            disabled={!quizAvailable || !allAnswered || submitting || Boolean(result?.passed)}
             onClick={submitQuiz}
           >
             <Trophy size={18} aria-hidden="true" />

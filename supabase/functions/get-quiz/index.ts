@@ -56,7 +56,7 @@ Deno.serve(async (req) => {
 
     const { data: quiz, error: quizError } = await admin
       .from("quizzes")
-      .select("id, passing_score")
+      .select("id, passing_score, is_available")
       .eq("course_week_id", weekId)
       .single();
 
@@ -64,17 +64,36 @@ Deno.serve(async (req) => {
 
     const { data: questions, error: questionsError } = await admin
       .from("quiz_questions")
-      .select("id, prompt, options, sort_order")
+      .select("id, prompt, options, correct_option_index, sort_order")
       .eq("quiz_id", quiz.id)
       .order("sort_order", { ascending: true });
 
     if (questionsError) return json({ error: questionsError.message }, 500);
 
+    const answerKeyReady = Boolean(
+      questions?.length && questions.every((question) => question.correct_option_index !== null)
+    );
+    const available = Boolean(quiz.is_available && answerKeyReady);
+    const passingScore = Math.max(70, Number(quiz.passing_score || 70));
+
+    if (!available) {
+      return json({
+        quiz: {
+          id: quiz.id,
+          passingScore,
+        },
+        available: false,
+        questions: [],
+        message: "This quiz is not available yet. The course team is still preparing its answer key.",
+      });
+    }
+
     return json({
       quiz: {
         id: quiz.id,
-        passingScore: quiz.passing_score,
+        passingScore,
       },
+      available: true,
       questions: (questions || []).map((question) => ({
         id: question.id,
         prompt: question.prompt,

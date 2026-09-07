@@ -9,22 +9,20 @@ export default function CourseDashboard({
   user,
   enrollment,
   attempts,
-  activitySubmissions,
   demoMode,
   loading,
   profile,
   profileSaving,
   onOpenMaterial,
   onStartQuiz,
-  onSubmitActivity,
   onRefresh,
   onSignOut,
   onSaveGoogleEmail,
   onNotice,
 }) {
-  const progress = getCourseProgress(attempts, activitySubmissions);
+  const progress = getCourseProgress(attempts);
   const openWeeks = courseWeeks.filter(
-    (week) => getWeekAccess(week, enrollment, attempts, activitySubmissions).unlocked
+    (week) => getWeekAccess(week, enrollment, attempts).unlocked
   );
 
   return (
@@ -37,8 +35,8 @@ export default function CourseDashboard({
           <p className="eyebrow">{demoMode ? "Demo mode" : "Student portal"}</p>
           <h1 className="gallant-bold">TitoGems weekly course plan</h1>
           <p className="grry">
-            Weekly lessons unlock on schedule. Each quiz must be passed and the
-            weekly activity must be submitted before the next week opens.
+            Weekly lessons unlock on schedule. Each quiz must be passed before
+            the next week opens.
           </p>
           <div className="header-actions">
             <button type="button" className="secondary-button" onClick={onRefresh}>
@@ -65,7 +63,7 @@ export default function CourseDashboard({
         </div>
         <div className="metric">
           <Trophy size={20} aria-hidden="true" />
-          <span>Weeks complete</span>
+          <span>Quizzes passed</span>
           <strong>
             {progress.completedCount}/{progress.totalWeeks}
           </strong>
@@ -88,13 +86,10 @@ export default function CourseDashboard({
             <WeekCard
               key={week.id}
               week={week}
-              access={getWeekAccess(week, enrollment, attempts, activitySubmissions)}
+              access={getWeekAccess(week, enrollment, attempts)}
               attempts={attempts}
-              activitySubmissions={activitySubmissions}
               onOpenMaterial={onOpenMaterial}
               onStartQuiz={onStartQuiz}
-              onSubmitActivity={onSubmitActivity}
-              onNotice={onNotice}
             />
           ))}
         </section>

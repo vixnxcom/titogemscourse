@@ -68,7 +68,7 @@ Deno.serve(async (req) => {
 
     const { data: quiz, error: quizError } = await admin
       .from("quizzes")
-      .select("id, passing_score")
+      .select("id, passing_score, is_available")
       .eq("course_week_id", weekId)
       .single();
 
@@ -82,6 +82,9 @@ Deno.serve(async (req) => {
 
     if (questionsError) return json({ error: questionsError.message }, 500);
     if (!questions?.length) return json({ error: "No quiz questions found." }, 404);
+    if (!quiz.is_available || questions.some((question) => question.correct_option_index === null)) {
+      return json({ error: "This quiz is not available until its answer key is ready." }, 409);
+    }
 
     const missingAnswer = questions.some((question) => answers[question.id] === undefined);
 
@@ -93,7 +96,8 @@ Deno.serve(async (req) => {
       (question) => Number(answers[question.id]) === question.correct_option_index,
     ).length;
     const scorePercent = Math.round((correctCount / questions.length) * 100);
-    const passed = scorePercent >= quiz.passing_score;
+    const passingScore = Math.max(70, Number(quiz.passing_score || 70));
+    const passed = scorePercent >= passingScore;
 
     const { data: attempt, error: attemptError } = await admin
       .from("quiz_attempts")
@@ -116,6 +120,7 @@ Deno.serve(async (req) => {
       weekNumber: attempt.week_number,
       scorePercent: Number(attempt.score_percent),
       passed: attempt.passed,
+      passingScore,
       createdAt: attempt.created_at,
     });
   } catch (error) {
