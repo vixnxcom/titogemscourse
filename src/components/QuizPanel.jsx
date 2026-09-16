@@ -82,7 +82,12 @@ export default function QuizPanel({
       ).length;
       const scorePercent = Math.round((correct / questions.length) * 100);
       const passed = scorePercent >= passingScore;
-      setResult({ scorePercent, passed, passingScore });
+      const results = questions.map((question) => ({
+        questionId: question.id,
+        correct: answers[question.id] === question.correctOptionIndex,
+        explanation: question.explanation || null,
+      }));
+      setResult({ scorePercent, passed, passingScore, results });
       onPassed(week.weekNumber, scorePercent, passed);
       setSubmitting(false);
       return;
@@ -153,12 +158,29 @@ export default function QuizPanel({
         </div>
 
         {result ? (
-          <div className={`quiz-result ${result.passed ? "passed" : "failed"}`}>
-            <CheckCircle2 size={20} aria-hidden="true" />
-            <span>
-              Score: {result.scorePercent}%. {result.passed ? "Passed" : "Try again"}
-            </span>
-          </div>
+          <>
+            <div className={`quiz-result ${result.passed ? "passed" : "failed"}`}>
+              <CheckCircle2 size={20} aria-hidden="true" />
+              <span>
+                Score: {result.scorePercent}%. {result.passed ? "Passed" : "Try again"}
+              </span>
+            </div>
+            {result.results?.length ? (
+              <div className="quiz-review" aria-label="Quiz feedback">
+                {result.results.map((item, index) => (
+                  <div
+                    key={item.questionId}
+                    className={`quiz-review-item ${item.correct ? "is-correct" : "is-incorrect"}`}
+                  >
+                    <strong>
+                      Question {index + 1}: {item.correct ? "Correct" : "Incorrect"}
+                    </strong>
+                    {item.explanation ? <p>{item.explanation}</p> : null}
+                  </div>
+                ))}
+              </div>
+            ) : null}
+          </>
         ) : null}
 
         <div className="modal-actions">

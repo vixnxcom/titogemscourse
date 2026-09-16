@@ -76,7 +76,7 @@ Deno.serve(async (req) => {
 
     const { data: questions, error: questionsError } = await admin
       .from("quiz_questions")
-      .select("id, correct_option_index")
+      .select("id, correct_option_index, explanation")
       .eq("quiz_id", quiz.id)
       .order("sort_order", { ascending: true });
 
@@ -98,6 +98,11 @@ Deno.serve(async (req) => {
     const scorePercent = Math.round((correctCount / questions.length) * 100);
     const passingScore = Math.max(70, Number(quiz.passing_score || 70));
     const passed = scorePercent >= passingScore;
+    const results = questions.map((question) => ({
+      questionId: question.id,
+      correct: Number(answers[question.id]) === question.correct_option_index,
+      explanation: question.explanation,
+    }));
 
     const { data: attempt, error: attemptError } = await admin
       .from("quiz_attempts")
@@ -121,6 +126,7 @@ Deno.serve(async (req) => {
       scorePercent: Number(attempt.score_percent),
       passed: attempt.passed,
       passingScore,
+      results,
       createdAt: attempt.created_at,
     });
   } catch (error) {
