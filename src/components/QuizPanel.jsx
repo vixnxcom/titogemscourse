@@ -6,16 +6,39 @@ import { supabase } from "../lib/supabase";
 
 export default function QuizPanel({
   week,
+  initialAttempt,
   demoMode,
   onClose,
   onSubmitted,
   onNotice,
 }) {
+  const initialResult = useMemo(() => {
+    if (!initialAttempt) return null;
+
+    const totalQuestions = Number(initialAttempt.totalQuestions || 20);
+    const scorePercent = Number(initialAttempt.scorePercent || 0);
+    const correctCount = Number.isFinite(Number(initialAttempt.correctCount))
+      ? Number(initialAttempt.correctCount)
+      : Math.round((scorePercent / 100) * totalQuestions);
+
+    return {
+      ...getQuizScoreFeedback(
+        correctCount,
+        totalQuestions,
+        week.weekNumber === 4
+          ? "the principles of discipline and habit-building"
+          : "the course concepts"
+      ),
+      passed: Boolean(initialAttempt.passed),
+      passingScore: PASSING_SCORE,
+    };
+  }, [initialAttempt, week.weekNumber]);
+
   const [loading, setLoading] = useState(!demoMode);
   const [submitting, setSubmitting] = useState(false);
   const [questions, setQuestions] = useState(demoMode ? demoQuizQuestions[week.weekNumber] || [] : []);
   const [answers, setAnswers] = useState({});
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState(initialResult);
   const [passingScore, setPassingScore] = useState(PASSING_SCORE);
   const [quizAvailable, setQuizAvailable] = useState(demoMode);
   const [quizMessage, setQuizMessage] = useState("");
@@ -221,15 +244,19 @@ export default function QuizPanel({
                   Score: {result.correctCount}/{result.totalQuestions} ({result.scorePercent}%) - Pass mark: {result.passingScore}%
                 </span>
                 <p>{result.message}</p>
-              {!result.passed ? (
-                <>
-                  <p>Review the lesson and try the quiz again when you are ready.</p>
-                  <button className="primary-button" type="button" onClick={startRetake}>
-                    <RotateCcw size={18} aria-hidden="true" />
-                    Retake quiz
-                  </button>
-                </>
-              ) : null}
+                {result.label !== "Excellent" ? (
+                  <>
+                    <p>
+                      {result.passed
+                        ? "You passed this quiz, but you can retake it to improve your score."
+                        : "Review the lesson and try the quiz again when you are ready."}
+                    </p>
+                    <button className="primary-button" type="button" onClick={startRetake}>
+                      <RotateCcw size={18} aria-hidden="true" />
+                      Retake quiz
+                    </button>
+                  </>
+                ) : null}
             </div>
           </div>
         )}

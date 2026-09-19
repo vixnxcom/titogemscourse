@@ -27,7 +27,7 @@ export default function App() {
   const auth = useSupabaseSession();
   const course = useCourseData(auth.user);
   const [notice, setNotice] = useState("");
-  const [activeQuizWeek, setActiveQuizWeek] = useState(null);
+  const [activeQuiz, setActiveQuiz] = useState(null);
   const [quizNeedsRefresh, setQuizNeedsRefresh] = useState(false);
 
   async function openMaterial(week, material) {
@@ -74,11 +74,15 @@ export default function App() {
   }
 
   function closeQuiz() {
-    setActiveQuizWeek(null);
+    setActiveQuiz(null);
     if (quizNeedsRefresh) {
       setQuizNeedsRefresh(false);
       course.refresh();
     }
+  }
+
+  function openQuiz(week, attempt) {
+    setActiveQuiz({ week, attempt: attempt || null });
   }
 
   if (auth.loading || course.loading) {
@@ -134,15 +138,16 @@ export default function App() {
           demoMode={course.demoMode}
           loading={course.loading}
           onOpenMaterial={openMaterial}
-          onStartQuiz={setActiveQuizWeek}
+          onStartQuiz={openQuiz}
           onRefresh={course.refresh}
           onSignOut={auth.signOut}
         />
       )}
 
-      {activeQuizWeek ? (
+      {activeQuiz ? (
         <QuizPanel
-          week={activeQuizWeek}
+          week={activeQuiz.week}
+          initialAttempt={activeQuiz.attempt}
           demoMode={course.demoMode}
           onClose={closeQuiz}
           onSubmitted={handleQuizSubmitted}

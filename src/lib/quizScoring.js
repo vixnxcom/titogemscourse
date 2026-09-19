@@ -86,3 +86,23 @@ export function getCourseGrade(attempts, courseWeeks) {
     ...getScoreBand(percent),
   };
 }
+
+export function getCumulativeScore(attempts, courseWeeks, questionsPerQuiz = 20) {
+  const totalQuestions = courseWeeks.length * questionsPerQuiz;
+  const correctCount = courseWeeks.reduce((total, week) => {
+    const bestScore = attempts
+      .filter((attempt) => attempt.weekNumber === week.weekNumber)
+      .reduce(
+        (best, attempt) => Math.max(best, Number(attempt.scorePercent) || 0),
+        0
+      );
+
+    return total + Math.round((bestScore / 100) * questionsPerQuiz);
+  }, 0);
+
+  return {
+    correctCount,
+    totalQuestions,
+    percent: totalQuestions ? Math.round((correctCount / totalQuestions) * 100) : 0,
+  };
+}

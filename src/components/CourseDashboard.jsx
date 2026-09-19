@@ -1,7 +1,7 @@
 import { Award, BookOpen, CalendarDays, LogOut, RefreshCw, TrendingUp, Trophy } from "lucide-react";
 import { courseWeeks } from "../lib/coursePlan";
 import { getCourseProgress, getWeekAccess } from "../lib/access";
-import { getCourseGrade } from "../lib/quizScoring";
+import { getCourseGrade, getCumulativeScore } from "../lib/quizScoring";
 import WeekCard from "./WeekCard";
 
 export default function CourseDashboard({
@@ -17,6 +17,7 @@ export default function CourseDashboard({
 }) {
   const progress = getCourseProgress(attempts);
   const courseGrade = getCourseGrade(attempts, courseWeeks);
+  const cumulativeScore = getCumulativeScore(attempts, courseWeeks);
   const openWeeks = courseWeeks.filter(
     (week) => getWeekAccess(week, enrollment, attempts).unlocked
   );
@@ -66,8 +67,11 @@ export default function CourseDashboard({
         </div>
         <div className="metric">
           <TrendingUp size={20} aria-hidden="true" />
-          <span>Progress</span>
-          <strong>{progress.percent}%</strong>
+          <span>Cumulative score</span>
+          <strong>
+            {cumulativeScore.correctCount}/{cumulativeScore.totalQuestions}
+          </strong>
+          <small>{cumulativeScore.percent}% - correct answers out of all course questions</small>
         </div>
         <div className="metric">
           <Award size={20} aria-hidden="true" />
