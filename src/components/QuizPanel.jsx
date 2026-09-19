@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { CheckCircle2, Trophy, X } from "lucide-react";
+import { CheckCircle2, Trophy, X, XCircle } from "lucide-react";
 import { demoQuizQuestions, PASSING_SCORE } from "../lib/coursePlan";
 import { supabase } from "../lib/supabase";
 
@@ -7,7 +7,7 @@ export default function QuizPanel({
   week,
   demoMode,
   onClose,
-  onPassed,
+  onSubmitted,
   onNotice,
 }) {
   const [loading, setLoading] = useState(!demoMode);
@@ -88,7 +88,7 @@ export default function QuizPanel({
         explanation: question.explanation || null,
       }));
       setResult({ scorePercent, passed, passingScore, results });
-      onPassed(week.weekNumber, scorePercent, passed);
+      onSubmitted(week.weekNumber, scorePercent, passed);
       setSubmitting(false);
       return;
     }
@@ -107,7 +107,7 @@ export default function QuizPanel({
     }
 
     setResult(data);
-    if (data.passed) onPassed();
+    onSubmitted();
     setSubmitting(false);
   }
 
@@ -147,6 +147,7 @@ export default function QuizPanel({
                       type="radio"
                       name={question.id}
                       checked={answers[question.id] === optionIndex}
+                      disabled={result?.passed}
                       onChange={() => selectAnswer(question.id, optionIndex)}
                     />
                     <span>{option}</span>
@@ -160,10 +161,22 @@ export default function QuizPanel({
         {result ? (
           <>
             <div className={`quiz-result ${result.passed ? "passed" : "failed"}`}>
-              <CheckCircle2 size={20} aria-hidden="true" />
-              <span>
-                Score: {result.scorePercent}%. {result.passed ? "Passed" : "Try again"}
-              </span>
+              {result.passed ? (
+                <CheckCircle2 size={24} aria-hidden="true" />
+              ) : (
+                <XCircle size={24} aria-hidden="true" />
+              )}
+              <div>
+                <strong>
+                  {result.passed ? "Congratulations! You passed." : "You did not pass this time."}
+                </strong>
+                <span>
+                  Score: {result.scorePercent}% - Pass mark: {result.passingScore}%
+                </span>
+                {!result.passed ? (
+                  <p>Select your answers again and submit the quiz to retake it.</p>
+                ) : null}
+              </div>
             </div>
             {result.results?.length ? (
               <div className="quiz-review" aria-label="Quiz feedback">
@@ -183,20 +196,19 @@ export default function QuizPanel({
           </>
         ) : null}
 
-        <div className="modal-actions">
-          <button className="secondary-button" type="button" onClick={onClose}>
-            Close
-          </button>
-          <button
-            className="primary-button"
-            type="button"
-            disabled={!quizAvailable || !allAnswered || submitting || Boolean(result?.passed)}
-            onClick={submitQuiz}
-          >
-            <Trophy size={18} aria-hidden="true" />
-            {submitting ? "Submitting" : "Submit quiz"}
-          </button>
-        </div>
+        {!result?.passed ? (
+          <div className="modal-actions">
+            <button
+              className="primary-button"
+              type="button"
+              disabled={!quizAvailable || !allAnswered || submitting}
+              onClick={submitQuiz}
+            >
+              <Trophy size={18} aria-hidden="true" />
+              {submitting ? "Submitting" : result ? "Retake quiz" : "Submit quiz"}
+            </button>
+          </div>
+        ) : null}
       </section>
     </div>
   );

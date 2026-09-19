@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { hasSupabaseConfig, supabase } from "../lib/supabase";
+import { AUTH_REDIRECT_URL, hasSupabaseConfig, supabase } from "../lib/supabase";
 
 export function useSupabaseSession() {
   const [session, setSession] = useState(null);
@@ -49,7 +49,7 @@ export function useSupabaseSession() {
             email: normalizedEmail,
             password,
             options: {
-              emailRedirectTo: window.location.origin,
+              emailRedirectTo: AUTH_REDIRECT_URL,
             },
           });
 

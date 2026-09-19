@@ -3,6 +3,9 @@ import { createClient } from "@supabase/supabase-js";
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
+export const AUTH_REDIRECT_URL =
+  import.meta.env.VITE_AUTH_REDIRECT_URL || "https://titogemscourse.pages.dev";
+
 export const hasSupabaseConfig = Boolean(
   supabaseUrl &&
     supabaseAnonKey &&

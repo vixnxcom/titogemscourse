@@ -30,6 +30,7 @@ export default function App() {
   const studentProfile = useStudentProfile(auth.user);
   const [notice, setNotice] = useState("");
   const [activeQuizWeek, setActiveQuizWeek] = useState(null);
+  const [quizNeedsRefresh, setQuizNeedsRefresh] = useState(false);
 
   async function openMaterial(week, material) {
     if (course.demoMode) {
@@ -66,10 +67,18 @@ export default function App() {
     window.open(data.url, "_blank", "noopener,noreferrer");
   }
 
-  function handleQuizPassed(weekNumber, scorePercent, passed) {
+  function handleQuizSubmitted(weekNumber, scorePercent, passed) {
     if (course.demoMode) {
       course.addDemoAttempt(weekNumber, scorePercent, passed);
     } else {
+      setQuizNeedsRefresh(true);
+    }
+  }
+
+  function closeQuiz() {
+    setActiveQuizWeek(null);
+    if (quizNeedsRefresh) {
+      setQuizNeedsRefresh(false);
       course.refresh();
     }
   }
@@ -141,8 +150,8 @@ export default function App() {
         <QuizPanel
           week={activeQuizWeek}
           demoMode={course.demoMode}
-          onClose={() => setActiveQuizWeek(null)}
-          onPassed={handleQuizPassed}
+          onClose={closeQuiz}
+          onSubmitted={handleQuizSubmitted}
           onNotice={setNotice}
         />
       ) : null}
