@@ -586,7 +586,19 @@ button:disabled {
   width: 100%;
   padding: 0 12px;
   color: #fff;
-   background: linear-gradient(33.33deg, #025e1c 19.83%, #0de405 161.18%); 
+  background: linear-gradient(33.33deg, #025e1c 19.83%, #0de405 161.18%);
+}
+
+.quiz-score {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 8px;
+  border-radius: 999px;
+  color: #025e1c;
+  background: #fff;
+  font-size: 0.8rem;
+  font-weight: 900;
 }
 
 .lock-note {
@@ -668,11 +680,15 @@ button:disabled {
   display: grid;
   place-items: center;
   padding: 20px;
-  background: rgba(21, 29, 26, 0.5);
+  /* background: rgba(21, 29, 26, 0.5); */
+  background: #fff;
+  width: 100%;
+  height: 100%;
 }
 
 .quiz-modal {
-  width: min(760px, 100%);
+  width: min(860px, 100%); 
+
   max-height: min(860px, calc(100vh - 40px));
   overflow: auto;
   display: grid;

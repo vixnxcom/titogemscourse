@@ -14,6 +14,11 @@ export default function WeekCard({
   onStartQuiz,
 }) {
   const passed = hasPassedWeek(attempts, week.weekNumber);
+  const weekAttempts = attempts
+    .filter((attempt) => attempt.weekNumber === week.weekNumber)
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  const latestAttempt = weekAttempts[0];
+  const passedAttempt = weekAttempts.find((attempt) => attempt.passed);
 
   return (
     <article className={`week-card ${access.unlocked ? "is-open" : "is-locked"}`}>
@@ -57,7 +62,12 @@ export default function WeekCard({
           title={access.unlocked ? "Start weekly quiz" : access.reasons.join(", ")}
         >
           <Trophy size={18} aria-hidden="true" />
-          {passed ? "Quiz passed" : "Take quiz"}
+          <span>{passed ? "Quiz passed" : latestAttempt ? "Retake quiz" : "Take quiz"}</span>
+          {(passed ? passedAttempt : latestAttempt) ? (
+            <span className="quiz-score">
+              {(passed ? passedAttempt : latestAttempt).scorePercent}%
+            </span>
+          ) : null}
         </button>
         {!access.unlocked ? (
           <div className="lock-note">
