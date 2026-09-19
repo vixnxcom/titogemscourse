@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { CheckCircle2, Trophy, X, XCircle } from "lucide-react";
+import { CheckCircle2, RotateCcw, Trophy, X, XCircle } from "lucide-react";
 import { demoQuizQuestions, PASSING_SCORE } from "../lib/coursePlan";
 import { supabase } from "../lib/supabase";
 
@@ -68,6 +68,11 @@ export default function QuizPanel({
     }));
   }
 
+  function startRetake() {
+    setAnswers({});
+    setResult(null);
+  }
+
   async function submitQuiz() {
     if (!allAnswered) {
       onNotice("Answer every question before submitting.");
@@ -124,7 +129,7 @@ export default function QuizPanel({
           </button>
         </div>
 
-        {!loading && quizAvailable ? (
+        {!loading && quizAvailable && !result ? (
           <p className="quiz-pass-note">Pass mark: {passingScore}%</p>
         ) : null}
 
@@ -134,81 +139,71 @@ export default function QuizPanel({
           <p className="muted">{quizMessage || "This quiz is not available yet."}</p>
         ) : null}
 
-        <div className="question-list">
-          {questions.map((question, index) => (
-            <fieldset key={question.id} className="question-block">
-              <legend>
-                {index + 1}. {question.prompt}
-              </legend>
-              <div className="option-list">
-                {question.options.map((option, optionIndex) => (
-                  <label key={option} className="option-row">
-                    <input
-                      type="radio"
-                      name={question.id}
-                      checked={answers[question.id] === optionIndex}
-                      disabled={result?.passed}
-                      onChange={() => selectAnswer(question.id, optionIndex)}
-                    />
-                    <span>{option}</span>
-                  </label>
-                ))}
-              </div>
-            </fieldset>
-          ))}
-        </div>
-
-        {result ? (
+        {!result ? (
           <>
-            <div className={`quiz-result ${result.passed ? "passed" : "failed"}`}>
-              {result.passed ? (
-                <CheckCircle2 size={24} aria-hidden="true" />
-              ) : (
-                <XCircle size={24} aria-hidden="true" />
-              )}
-              <div>
-                <strong>
-                  {result.passed ? "Congratulations! You passed." : "You did not pass this time."}
-                </strong>
-                <span>
-                  Score: {result.scorePercent}% - Pass mark: {result.passingScore}%
-                </span>
-                {!result.passed ? (
-                  <p>Select your answers again and submit the quiz to retake it.</p>
-                ) : null}
-              </div>
-            </div>
-            {result.results?.length ? (
-              <div className="quiz-review" aria-label="Quiz feedback">
-                {result.results.map((item, index) => (
-                  <div
-                    key={item.questionId}
-                    className={`quiz-review-item ${item.correct ? "is-correct" : "is-incorrect"}`}
-                  >
-                    <strong>
-                      Question {index + 1}: {item.correct ? "Correct" : "Incorrect"}
-                    </strong>
-                    {item.explanation ? <p>{item.explanation}</p> : null}
+            <div className="question-list">
+              {questions.map((question, index) => (
+                <fieldset key={question.id} className="question-block">
+                  <legend>
+                    {index + 1}. {question.prompt}
+                  </legend>
+                  <div className="option-list">
+                    {question.options.map((option, optionIndex) => (
+                      <label key={option} className="option-row">
+                        <input
+                          type="radio"
+                          name={question.id}
+                          checked={answers[question.id] === optionIndex}
+                          onChange={() => selectAnswer(question.id, optionIndex)}
+                        />
+                        <span>{option}</span>
+                      </label>
+                    ))}
                   </div>
-                ))}
+                </fieldset>
+              ))}
+            </div>
+
+            {!loading && quizAvailable && questions.length > 0 ? (
+              <div className="modal-actions">
+                <button
+                  className="primary-button"
+                  type="button"
+                  disabled={!allAnswered || submitting}
+                  onClick={submitQuiz}
+                >
+                  <Trophy size={18} aria-hidden="true" />
+                  {submitting ? "Submitting" : "Submit quiz"}
+                </button>
               </div>
             ) : null}
           </>
-        ) : null}
-
-        {!result?.passed ? (
-          <div className="modal-actions">
-            <button
-              className="primary-button"
-              type="button"
-              disabled={!quizAvailable || !allAnswered || submitting}
-              onClick={submitQuiz}
-            >
-              <Trophy size={18} aria-hidden="true" />
-              {submitting ? "Submitting" : result ? "Retake quiz" : "Submit quiz"}
-            </button>
+        ) : (
+          <div className={`quiz-result quiz-result-screen ${result.passed ? "passed" : "failed"}`}>
+            {result.passed ? (
+              <CheckCircle2 size={42} aria-hidden="true" />
+            ) : (
+              <XCircle size={42} aria-hidden="true" />
+            )}
+            <div>
+              <strong>
+                {result.passed ? "Congratulations! You passed." : "You did not pass this time."}
+              </strong>
+              <span>
+                Score: {result.scorePercent}% - Pass mark: {result.passingScore}%
+              </span>
+              {!result.passed ? (
+                <>
+                  <p>Review the lesson and try the quiz again when you are ready.</p>
+                  <button className="primary-button" type="button" onClick={startRetake}>
+                    <RotateCcw size={18} aria-hidden="true" />
+                    Retake quiz
+                  </button>
+                </>
+              ) : null}
+            </div>
           </div>
-        ) : null}
+        )}
       </section>
     </div>
   );
