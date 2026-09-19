@@ -5,7 +5,6 @@ import CourseDashboard from "./components/CourseDashboard";
 import PaymentPanel from "./components/PaymentPanel";
 import QuizPanel from "./components/QuizPanel";
 import { useCourseData } from "./hooks/useCourseData";
-import { useStudentProfile } from "./hooks/useStudentProfile";
 import { useSupabaseSession } from "./hooks/useSupabaseSession";
 import { supabase } from "./lib/supabase";
 
@@ -27,7 +26,6 @@ async function getFunctionErrorMessage(error, fallback) {
 export default function App() {
   const auth = useSupabaseSession();
   const course = useCourseData(auth.user);
-  const studentProfile = useStudentProfile(auth.user);
   const [notice, setNotice] = useState("");
   const [activeQuizWeek, setActiveQuizWeek] = useState(null);
   const [quizNeedsRefresh, setQuizNeedsRefresh] = useState(false);
@@ -135,14 +133,10 @@ export default function App() {
           attempts={course.attempts}
           demoMode={course.demoMode}
           loading={course.loading}
-          profile={studentProfile.profile}
-          profileSaving={studentProfile.saving}
           onOpenMaterial={openMaterial}
           onStartQuiz={setActiveQuizWeek}
           onRefresh={course.refresh}
           onSignOut={auth.signOut}
-          onSaveGoogleEmail={studentProfile.saveGoogleEmail}
-          onNotice={setNotice}
         />
       )}
 

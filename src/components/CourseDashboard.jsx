@@ -3,8 +3,6 @@ import { courseWeeks } from "../lib/coursePlan";
 import { getCourseProgress, getWeekAccess } from "../lib/access";
 import { getCourseGrade } from "../lib/quizScoring";
 import WeekCard from "./WeekCard";
-import SetupChecklist from "./SetupChecklist";
-import DriveAccessPanel from "./DriveAccessPanel";
 
 export default function CourseDashboard({
   user,
@@ -12,14 +10,10 @@ export default function CourseDashboard({
   attempts,
   demoMode,
   loading,
-  profile,
-  profileSaving,
   onOpenMaterial,
   onStartQuiz,
   onRefresh,
   onSignOut,
-  onSaveGoogleEmail,
-  onNotice,
 }) {
   const progress = getCourseProgress(attempts);
   const courseGrade = getCourseGrade(attempts, courseWeeks);
@@ -105,16 +99,6 @@ export default function CourseDashboard({
             />
           ))}
         </section>
-        <div className="sidebar-stack">
-          {/* <SetupChecklist demoMode={demoMode} /> */}
-          <DriveAccessPanel
-            demoMode={demoMode}
-            profile={profile}
-            saving={profileSaving}
-            onSaveGoogleEmail={onSaveGoogleEmail}
-            onNotice={onNotice}
-          />
-        </div>
       </div>
     </main>
   );
