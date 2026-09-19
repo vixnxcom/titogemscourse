@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { CheckCircle2, RotateCcw, Trophy, X, XCircle } from "lucide-react";
 import { demoQuizQuestions, PASSING_SCORE } from "../lib/coursePlan";
+import { getQuizScoreFeedback } from "../lib/quizScoring";
 import { supabase } from "../lib/supabase";
 
 export default function QuizPanel({
@@ -92,7 +93,18 @@ export default function QuizPanel({
         correct: answers[question.id] === question.correctOptionIndex,
         explanation: question.explanation || null,
       }));
-      setResult({ scorePercent, passed, passingScore, results });
+      setResult({
+        ...getQuizScoreFeedback(
+          correct,
+          questions.length,
+          week.weekNumber === 4
+            ? "the principles of discipline and habit-building"
+            : "the course concepts"
+        ),
+        passed,
+        passingScore,
+        results,
+      });
       onSubmitted(week.weekNumber, scorePercent, passed);
       setSubmitting(false);
       return;
@@ -111,7 +123,20 @@ export default function QuizPanel({
       return;
     }
 
-    setResult(data);
+    const totalQuestions = Number(data.totalQuestions || 20);
+    const correctCount = Number.isFinite(Number(data.correctCount))
+      ? Number(data.correctCount)
+      : Math.round((Number(data.scorePercent) / 100) * totalQuestions);
+    setResult({
+      ...data,
+      ...getQuizScoreFeedback(
+        correctCount,
+        totalQuestions,
+        week.weekNumber === 4
+          ? "the principles of discipline and habit-building"
+          : "the course concepts"
+      ),
+    });
     onSubmitted();
     setSubmitting(false);
   }
@@ -185,13 +210,17 @@ export default function QuizPanel({
             ) : (
               <XCircle size={42} aria-hidden="true" />
             )}
-            <div>
-              <strong>
-                {result.passed ? "Congratulations! You passed." : "You did not pass this time."}
-              </strong>
-              <span>
-                Score: {result.scorePercent}% - Pass mark: {result.passingScore}%
-              </span>
+              <div>
+                <strong>
+                  {result.passed ? "Congratulations! You passed." : "You did not pass this time."}
+                </strong>
+                <span className="quiz-score-band">
+                  {result.emoji} {result.label}
+                </span>
+                <span>
+                  Score: {result.correctCount}/{result.totalQuestions} ({result.scorePercent}%) - Pass mark: {result.passingScore}%
+                </span>
+                <p>{result.message}</p>
               {!result.passed ? (
                 <>
                   <p>Review the lesson and try the quiz again when you are ready.</p>

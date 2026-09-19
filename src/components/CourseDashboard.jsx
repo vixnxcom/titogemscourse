@@ -1,6 +1,7 @@
-import { BookOpen, CalendarDays, LogOut, RefreshCw, TrendingUp, Trophy } from "lucide-react";
+import { Award, BookOpen, CalendarDays, LogOut, RefreshCw, TrendingUp, Trophy } from "lucide-react";
 import { courseWeeks } from "../lib/coursePlan";
 import { getCourseProgress, getWeekAccess } from "../lib/access";
+import { getCourseGrade } from "../lib/quizScoring";
 import WeekCard from "./WeekCard";
 import SetupChecklist from "./SetupChecklist";
 import DriveAccessPanel from "./DriveAccessPanel";
@@ -21,6 +22,7 @@ export default function CourseDashboard({
   onNotice,
 }) {
   const progress = getCourseProgress(attempts);
+  const courseGrade = getCourseGrade(attempts, courseWeeks);
   const openWeeks = courseWeeks.filter(
     (week) => getWeekAccess(week, enrollment, attempts).unlocked
   );
@@ -72,6 +74,16 @@ export default function CourseDashboard({
           <TrendingUp size={20} aria-hidden="true" />
           <span>Progress</span>
           <strong>{progress.percent}%</strong>
+        </div>
+        <div className="metric">
+          <Award size={20} aria-hidden="true" />
+          <span>Course grade</span>
+          <strong>{courseGrade.complete ? `${courseGrade.percent}%` : "In progress"}</strong>
+          <small>
+            {courseGrade.complete
+              ? `${courseGrade.emoji} ${courseGrade.label}`
+              : `${courseGrade.passedCount}/${courseGrade.totalWeeks} quizzes passed`}
+          </small>
         </div>
         <div className="metric">
           <CalendarDays size={20} aria-hidden="true" />

@@ -457,7 +457,7 @@ button:disabled {
 
 .metric-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 12px;
 }
 
@@ -485,6 +485,13 @@ button:disabled {
   min-width: 0;
   overflow-wrap: anywhere;
   font-size: 1.4rem;
+}
+
+.metric small {
+  grid-column: 1 / -1;
+  color: #60716a;
+  font-size: 0.82rem;
+  font-weight: 700;
 }
 
 .content-layout {
@@ -780,6 +787,11 @@ button:disabled {
 
 .quiz-result span {
   font-weight: 700;
+}
+
+.quiz-score-band {
+  font-size: 1.15rem;
+  font-weight: 900 !important;
 }
 
 .quiz-result p {

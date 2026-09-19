@@ -124,6 +124,8 @@ Deno.serve(async (req) => {
       attemptId: attempt.id,
       weekNumber: attempt.week_number,
       scorePercent: Number(attempt.score_percent),
+      correctCount,
+      totalQuestions: questions.length,
       passed: attempt.passed,
       passingScore,
       results,
