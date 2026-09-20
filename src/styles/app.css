@@ -440,8 +440,9 @@ button:disabled {
 .secondary-button {
   padding: 0 14px;
   color: #f1f1f1;
-  border-color: #bad7ce;
+  border-color: transparent;
   background: linear-gradient(163.33deg, #02013A 10.22%, #0603A0 88.48%);
+  box-shadow: 0 8px 18px rgba(6, 3, 160, 0.24);
 }
 
 .ghost-button {
