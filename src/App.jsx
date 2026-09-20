@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AlertCircle } from "lucide-react";
 import AuthPanel from "./components/AuthPanel";
 import CourseDashboard from "./components/CourseDashboard";
 import PaymentPanel from "./components/PaymentPanel";
 import QuizPanel from "./components/QuizPanel";
+import WelcomeScreen from "./components/WelcomeScreen";
 import { useCourseData } from "./hooks/useCourseData";
 import { useSupabaseSession } from "./hooks/useSupabaseSession";
 import { supabase } from "./lib/supabase";
@@ -29,6 +30,11 @@ export default function App() {
   const [notice, setNotice] = useState("");
   const [activeQuiz, setActiveQuiz] = useState(null);
   const [quizNeedsRefresh, setQuizNeedsRefresh] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(false);
+
+  useEffect(() => {
+    setShowWelcome(Boolean(auth.user && !course.demoMode));
+  }, [auth.user?.id, course.demoMode]);
 
   async function openMaterial(week, material) {
     if (course.demoMode) {
@@ -95,13 +101,16 @@ export default function App() {
   }
 
   const showAuth = !course.demoMode && !auth.user;
+  const showWelcomeScreen = !showAuth && showWelcome;
   const shellClassName = showAuth
     ? "app-shell welcome-shell bg-welcome"
-    : "app-shell portal-shell";
+    : showWelcomeScreen
+      ? "app-shell portal-shell journey-shell"
+      : "app-shell portal-shell";
 
   return (
     <div className={shellClassName}>
-      {notice ? (
+      {!showWelcomeScreen && notice ? (
         <div className="notice" role="status">
           <AlertCircle size={18} aria-hidden="true" />
           <span>{notice}</span>
@@ -111,49 +120,55 @@ export default function App() {
         </div>
       ) : null}
 
-      {!notice && course.error ? (
+      {!showWelcomeScreen && !notice && course.error ? (
         <div className="notice" role="alert">
           <AlertCircle size={18} aria-hidden="true" />
           <span>{course.error}</span>
         </div>
       ) : null}
 
-      {showAuth ? (
-        <AuthPanel onSubmit={auth.submitAuth} message={auth.authMessage} />
-      ) : null}
+      {showWelcomeScreen ? (
+        <WelcomeScreen onContinue={() => setShowWelcome(false)} />
+      ) : (
+        <>
+          {showAuth ? (
+            <AuthPanel onSubmit={auth.submitAuth} message={auth.authMessage} />
+          ) : null}
 
-      {!course.demoMode && auth.user && !course.enrollment ? (
-        <PaymentPanel
-          user={auth.user}
-          onPaid={course.refresh}
-          onNotice={setNotice}
-        />
-      ) : null}
+          {!course.demoMode && auth.user && !course.enrollment ? (
+            <PaymentPanel
+              user={auth.user}
+              onPaid={course.refresh}
+              onNotice={setNotice}
+            />
+          ) : null}
 
-      {(course.demoMode || course.enrollment) && (
-        <CourseDashboard
-          user={auth.user}
-          enrollment={course.enrollment}
-          attempts={course.attempts}
-          demoMode={course.demoMode}
-          loading={course.loading}
-          onOpenMaterial={openMaterial}
-          onStartQuiz={openQuiz}
-          onRefresh={course.refresh}
-          onSignOut={auth.signOut}
-        />
+          {(course.demoMode || course.enrollment) && (
+            <CourseDashboard
+              user={auth.user}
+              enrollment={course.enrollment}
+              attempts={course.attempts}
+              demoMode={course.demoMode}
+              loading={course.loading}
+              onOpenMaterial={openMaterial}
+              onStartQuiz={openQuiz}
+              onRefresh={course.refresh}
+              onSignOut={auth.signOut}
+            />
+          )}
+
+          {activeQuiz ? (
+            <QuizPanel
+              week={activeQuiz.week}
+              initialAttempt={activeQuiz.attempt}
+              demoMode={course.demoMode}
+              onClose={closeQuiz}
+              onSubmitted={handleQuizSubmitted}
+              onNotice={setNotice}
+            />
+          ) : null}
+        </>
       )}
-
-      {activeQuiz ? (
-        <QuizPanel
-          week={activeQuiz.week}
-          initialAttempt={activeQuiz.attempt}
-          demoMode={course.demoMode}
-          onClose={closeQuiz}
-          onSubmitted={handleQuizSubmitted}
-          onNotice={setNotice}
-        />
-      ) : null}
     </div>
   );
 }
