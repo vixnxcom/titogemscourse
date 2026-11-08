@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { BookOpen, Download, Printer, X } from "lucide-react";
+import { BookOpen, Download, X } from "lucide-react";
 import ActivityInstructions from "./ActivityInstructions";
 import { buildActivityDocumentHtml } from "../lib/activityDocument";
 
@@ -10,12 +10,12 @@ export default function ActivityPage({ week, activity, onBack }) {
 
   function downloadDocument() {
     const blob = new Blob([buildActivityDocumentHtml(week, activity)], {
-      type: "application/msword",
+      type: "text/html;charset=utf-8",
     });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `week-${week.weekNumber}-activity.doc`;
+    link.download = `week-${week.weekNumber}-activity.html`;
     link.click();
     URL.revokeObjectURL(url);
   }
@@ -35,11 +35,7 @@ export default function ActivityPage({ week, activity, onBack }) {
         <div className="activity-page-actions">
           <button type="button" className="secondary-button" onClick={downloadDocument}>
             <Download size={17} aria-hidden="true" />
-            Download editable document
-          </button>
-          <button type="button" className="ghost-button" onClick={() => window.print()}>
-            <Printer size={17} aria-hidden="true" />
-            Print / Save as PDF
+            Download activity document
           </button>
           <button className="icon-button" type="button" onClick={onBack} title="Close activity">
             <X size={20} aria-hidden="true" />

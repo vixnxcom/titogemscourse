@@ -126,6 +126,7 @@ export default function CourseDashboard({
                     aria-label="Edit student name"
                   >
                     <Pencil size={17} aria-hidden="true" />
+                    <span>Edit</span>
                   </button>
                 ) : null}
               </div>
