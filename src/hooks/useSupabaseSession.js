@@ -36,7 +36,7 @@ export function useSupabaseSession() {
 
   const actions = useMemo(
     () => ({
-      async submitAuth({ mode, email, password }) {
+      async submitAuth({ mode, fullName, email, password }) {
         if (!hasSupabaseConfig) {
           setAuthMessage("Supabase is not configured yet. The app is in demo mode.");
           return;
@@ -49,6 +49,9 @@ export function useSupabaseSession() {
             email: normalizedEmail,
             password,
             options: {
+              data: {
+                full_name: fullName.trim(),
+              },
               emailRedirectTo: AUTH_REDIRECT_URL,
             },
           });

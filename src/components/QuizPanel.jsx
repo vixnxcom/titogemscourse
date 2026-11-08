@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { CheckCircle2, RotateCcw, Trophy, X, XCircle } from "lucide-react";
+import { CheckCircle2, ClipboardCheck, RotateCcw, Trophy, X, XCircle } from "lucide-react";
 import { demoQuizQuestions, PASSING_SCORE } from "../lib/coursePlan";
 import { getQuizScoreFeedback } from "../lib/quizScoring";
 import { supabase } from "../lib/supabase";
@@ -166,15 +166,32 @@ export default function QuizPanel({
 
   return (
     <div className="modal-backdrop" role="presentation">
-      <section className="quiz-modal" role="dialog" aria-modal="true" aria-labelledby="quiz-title">
-        <div className="quiz-header">
-          <div>
-            <p className="eyebrow">Week {week.weekNumber} quiz</p>
-            <h2 id="quiz-title">{week.title}</h2>
+      <section className="quiz-dialog" role="dialog" aria-modal="true" aria-labelledby="quiz-title">
+        <header className="quiz-header">
+          <div className="quiz-heading">
+            <span className="quiz-type-icon" aria-hidden="true">
+              <ClipboardCheck size={20} />
+            </span>
+            <div>
+              <p className="eyebrow">Quiz · Week {week.weekNumber}</p>
+              <h2 id="quiz-title">{week.title}</h2>
+            </div>
           </div>
           <button className="icon-button" type="button" onClick={onClose} title="Close quiz">
             <X size={20} aria-hidden="true" />
           </button>
+        </header>
+
+        <div className="quiz-modal">
+
+        <div className="quiz-document-heading">
+          <p className="document-type-label quiz-label">
+            <span className="quiz-type-icon" aria-hidden="true">
+              <ClipboardCheck size={18} />
+            </span>
+            <span>Quiz · Week {week.weekNumber}</span>
+          </p>
+          <h1>{week.title}</h1>
         </div>
 
         {!loading && quizAvailable && !result ? (
@@ -260,6 +277,7 @@ export default function QuizPanel({
             </div>
           </div>
         )}
+        </div>
       </section>
     </div>
   );

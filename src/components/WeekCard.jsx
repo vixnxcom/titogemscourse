@@ -1,4 +1,5 @@
 import { FileText, Lock, PlayCircle, Trophy } from "lucide-react";
+import ActivitySubmission from "./ActivitySubmission";
 import { hasPassedWeek } from "../lib/access";
 
 const iconByType = {
@@ -10,8 +11,15 @@ export default function WeekCard({
   week,
   access,
   attempts,
+  activitySubmission,
+  activity,
+  user,
+  demoMode,
   onOpenMaterial,
   onStartQuiz,
+  onActivitySubmitted,
+  onNotice,
+  onOpenActivity,
 }) {
   const passed = hasPassedWeek(attempts, week.weekNumber);
   const weekAttempts = attempts
@@ -77,6 +85,18 @@ export default function WeekCard({
           </div>
         ) : null}
       </div>
+
+      <ActivitySubmission
+        week={week}
+        activity={activity}
+        access={access}
+        submission={activitySubmission}
+        user={user}
+        demoMode={demoMode}
+        onSubmitted={onActivitySubmitted}
+        onNotice={onNotice}
+        onOpenActivity={onOpenActivity}
+      />
     </article>
   );
 }

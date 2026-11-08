@@ -2,10 +2,14 @@ import { useEffect, useState } from "react";
 import { AlertCircle } from "lucide-react";
 import AuthPanel from "./components/AuthPanel";
 import CourseDashboard from "./components/CourseDashboard";
+import ActivityPage from "./components/ActivityPage";
 import PaymentPanel from "./components/PaymentPanel";
 import QuizPanel from "./components/QuizPanel";
 import WelcomeScreen from "./components/WelcomeScreen";
+import { courseWeeks } from "./lib/coursePlan";
+import { courseActivities } from "./lib/courseActivities";
 import { useCourseData } from "./hooks/useCourseData";
+import { useStudentProfile } from "./hooks/useStudentProfile";
 import { useSupabaseSession } from "./hooks/useSupabaseSession";
 import { supabase } from "./lib/supabase";
 
@@ -27,14 +31,28 @@ async function getFunctionErrorMessage(error, fallback) {
 export default function App() {
   const auth = useSupabaseSession();
   const course = useCourseData(auth.user);
+  const studentProfile = useStudentProfile(auth.user);
   const [notice, setNotice] = useState("");
   const [activeQuiz, setActiveQuiz] = useState(null);
   const [quizNeedsRefresh, setQuizNeedsRefresh] = useState(false);
   const [showWelcome, setShowWelcome] = useState(false);
+  const [activeActivityWeek, setActiveActivityWeek] = useState(null);
 
   useEffect(() => {
     setShowWelcome(Boolean(auth.user && !course.demoMode));
   }, [auth.user?.id, course.demoMode]);
+
+  useEffect(() => {
+    function syncActivityRoute() {
+      const path = window.location.pathname.replace(/\/$/, "") || "/";
+      const weekNumber = Number(new URLSearchParams(window.location.search).get("week"));
+      setActiveActivityWeek(path === "/activity" && weekNumber ? weekNumber : null);
+    }
+
+    syncActivityRoute();
+    window.addEventListener("popstate", syncActivityRoute);
+    return () => window.removeEventListener("popstate", syncActivityRoute);
+  }, []);
 
   async function openMaterial(week, material) {
     if (course.demoMode) {
@@ -91,6 +109,16 @@ export default function App() {
     setActiveQuiz({ week, attempt: attempt || null });
   }
 
+  function openActivity(week) {
+    window.history.pushState({}, "", `/activity?week=${week.weekNumber}`);
+    setActiveActivityWeek(week.weekNumber);
+  }
+
+  function closeActivity() {
+    window.history.pushState({}, "", "/");
+    setActiveActivityWeek(null);
+  }
+
   if (auth.loading || course.loading) {
     return (
       <div className="app-shell centered portal-shell">
@@ -102,15 +130,23 @@ export default function App() {
 
   const showAuth = !course.demoMode && !auth.user;
   const showWelcomeScreen = !showAuth && showWelcome;
+  const activityWeek = courseWeeks.find((week) => week.weekNumber === activeActivityWeek);
+  const showActivityScreen = Boolean(
+    !showAuth &&
+      activityWeek &&
+      (course.demoMode || course.enrollment)
+  );
   const shellClassName = showAuth
     ? "app-shell welcome-shell bg-welcome"
     : showWelcomeScreen
       ? "app-shell portal-shell journey-shell"
+      : showActivityScreen
+        ? "app-shell portal-shell activity-shell"
       : "app-shell portal-shell";
 
   return (
     <div className={shellClassName}>
-      {!showWelcomeScreen && notice ? (
+      {!showWelcomeScreen && !showActivityScreen && notice ? (
         <div className="notice" role="status">
           <AlertCircle size={18} aria-hidden="true" />
           <span>{notice}</span>
@@ -120,7 +156,7 @@ export default function App() {
         </div>
       ) : null}
 
-      {!showWelcomeScreen && !notice && course.error ? (
+      {!showWelcomeScreen && !showActivityScreen && !notice && course.error ? (
         <div className="notice" role="alert">
           <AlertCircle size={18} aria-hidden="true" />
           <span>{course.error}</span>
@@ -129,6 +165,12 @@ export default function App() {
 
       {showWelcomeScreen ? (
         <WelcomeScreen onContinue={() => setShowWelcome(false)} />
+      ) : showActivityScreen ? (
+        <ActivityPage
+          week={activityWeek}
+          activity={courseActivities[activityWeek.weekNumber]}
+          onBack={closeActivity}
+        />
       ) : (
         <>
           {showAuth ? (
@@ -146,12 +188,19 @@ export default function App() {
           {(course.demoMode || course.enrollment) && (
             <CourseDashboard
               user={auth.user}
+              profile={studentProfile.profile}
+              profileSaving={studentProfile.saving}
               enrollment={course.enrollment}
               attempts={course.attempts}
+            activitySubmissions={course.activitySubmissions}
               demoMode={course.demoMode}
               loading={course.loading}
               onOpenMaterial={openMaterial}
               onStartQuiz={openQuiz}
+            onActivitySubmitted={course.refresh}
+            onNotice={setNotice}
+              onSaveFullName={studentProfile.saveFullName}
+              onOpenActivity={openActivity}
               onRefresh={course.refresh}
               onSignOut={auth.signOut}
             />

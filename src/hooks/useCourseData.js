@@ -23,17 +23,32 @@ function normalizeAttempt(attempt) {
   };
 }
 
+function normalizeActivitySubmission(submission) {
+  return {
+    id: submission.id,
+    weekNumber: submission.week_number,
+    originalFilename: submission.original_filename,
+    fileSize: Number(submission.file_size || 0),
+    emailStatus: submission.email_status,
+    emailedAt: submission.emailed_at,
+    createdAt: submission.created_at,
+    updatedAt: submission.updated_at || submission.created_at,
+  };
+}
+
 export function useCourseData(user) {
   const demoMode = !hasSupabaseConfig;
   const [loading, setLoading] = useState(Boolean(user && !demoMode));
   const [enrollment, setEnrollment] = useState(demoMode ? getDemoEnrollment() : null);
   const [attempts, setAttempts] = useState(demoMode ? demoAttemptsSeed : []);
+  const [activitySubmissions, setActivitySubmissions] = useState([]);
   const [error, setError] = useState("");
 
   const refresh = useCallback(async () => {
     if (demoMode) {
       setEnrollment(getDemoEnrollment());
       setAttempts(demoAttemptsSeed);
+      setActivitySubmissions([]);
       setLoading(false);
       return;
     }
@@ -41,6 +56,7 @@ export function useCourseData(user) {
     if (!user) {
       setEnrollment(null);
       setAttempts([]);
+      setActivitySubmissions([]);
       setLoading(false);
       return;
     }
@@ -51,6 +67,7 @@ export function useCourseData(user) {
     const [
       { data: enrollmentData, error: enrollmentError },
       { data: attemptsData, error: attemptsError },
+      { data: activityData, error: activityError },
     ] =
       await Promise.all([
         supabase
@@ -65,13 +82,21 @@ export function useCourseData(user) {
           .eq("user_id", user.id)
           .eq("course_id", COURSE_ID)
           .order("created_at", { ascending: false }),
+        supabase
+          .from("activity_submissions")
+          .select("id, week_number, original_filename, file_size, email_status, emailed_at, created_at, updated_at")
+          .eq("user_id", user.id)
+          .eq("course_id", COURSE_ID)
+          .order("updated_at", { ascending: false }),
       ]);
 
     if (enrollmentError) setError(enrollmentError.message);
     if (attemptsError) setError(attemptsError.message);
+    if (activityError) setError(activityError.message);
 
     setEnrollment(enrollmentData || null);
     setAttempts((attemptsData || []).map(normalizeAttempt));
+    setActivitySubmissions((activityData || []).map(normalizeActivitySubmission));
     setLoading(false);
   }, [demoMode, user]);
 
@@ -102,6 +127,7 @@ export function useCourseData(user) {
     error,
     enrollment,
     attempts,
+    activitySubmissions,
     demoMode,
     refresh,
     ...demoActions,

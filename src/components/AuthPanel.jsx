@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Lock, LogIn, Mail, UserPlus } from "lucide-react";
+import { Lock, LogIn, Mail, UserPlus, UserRound } from "lucide-react";
 
 export default function AuthPanel({ onSubmit, message }) {
   const [mode, setMode] = useState("signIn");
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -24,9 +25,15 @@ export default function AuthPanel({ onSubmit, message }) {
       return;
     }
 
+    if (isSignUp && !fullName.trim()) {
+      setFormError("Enter your full name so the course team can identify your work.");
+      return;
+    }
+
     setSubmitting(true);
     await onSubmit({
       mode,
+      fullName: fullName.trim(),
       email,
       password,
     });
@@ -70,6 +77,24 @@ export default function AuthPanel({ onSubmit, message }) {
             Create account
           </button>
         </div>
+
+        {isSignUp ? (
+          <>
+            <label htmlFor="full-name">Full name</label>
+            <div className="input-row">
+              <UserRound size={18} aria-hidden="true" />
+              <input
+                id="full-name"
+                type="text"
+                value={fullName}
+                onChange={(event) => setFullName(event.target.value)}
+                placeholder="Your full name"
+                autoComplete="name"
+                required
+              />
+            </div>
+          </>
+        ) : null}
 
         <label htmlFor="email">Email address</label>
         <div className="input-row">

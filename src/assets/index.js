@@ -1,4 +1,4 @@
-import icon from './icon.png'
+import icon from './logo.jpeg'
 import blue from './blue.png'
 import green from './green.png'
 

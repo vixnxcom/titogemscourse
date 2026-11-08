@@ -17,7 +17,19 @@ export function hasPassedWeek(attempts, weekNumber) {
   );
 }
 
-export function getWeekAccess(week, enrollment, attempts, now = new Date()) {
+export function hasSubmittedActivity(activitySubmissions, weekNumber) {
+  return activitySubmissions.some(
+    (submission) => submission.weekNumber === weekNumber
+  );
+}
+
+export function getWeekAccess(
+  week,
+  enrollment,
+  attempts,
+  activitySubmissions = [],
+  now = new Date()
+) {
   if (!enrollment || enrollment.status !== "active") {
     return {
       unlocked: false,
@@ -32,8 +44,11 @@ export function getWeekAccess(week, enrollment, attempts, now = new Date()) {
   const timeReached = unlockDate ? unlockDate <= now : false;
   const previousQuizPassed =
     week.weekNumber === 1 || hasPassedWeek(attempts, week.weekNumber - 1);
+  const previousActivitySubmitted =
+    week.weekNumber === 1 ||
+    hasSubmittedActivity(activitySubmissions, week.weekNumber - 1);
 
-  if (timeReached && previousQuizPassed) {
+  if (timeReached && previousQuizPassed && previousActivitySubmitted) {
     return {
       unlocked: true,
       status: "open",
@@ -49,6 +64,9 @@ export function getWeekAccess(week, enrollment, attempts, now = new Date()) {
   }
   if (!previousQuizPassed) {
     reasons.push(`Pass Week ${week.weekNumber - 1} quiz first`);
+  }
+  if (!previousActivitySubmitted) {
+    reasons.push(`Submit Week ${week.weekNumber - 1} activity first`);
   }
   return {
     unlocked: false,

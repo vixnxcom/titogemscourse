@@ -39,6 +39,33 @@ export function useStudentProfile(user) {
     refresh();
   }, [refresh]);
 
+  async function saveFullName(fullName) {
+    if (demoMode || !user) return { error: null };
+
+    setSaving(true);
+    setError("");
+
+    const cleanName = fullName.trim();
+    const { data, error: updateError } = await supabase
+      .from("profiles")
+      .upsert({
+        id: user.id,
+        full_name: cleanName,
+      })
+      .select("id, full_name, google_email")
+      .single();
+
+    if (updateError) {
+      setError(updateError.message);
+      setSaving(false);
+      return { error: updateError };
+    }
+
+    setProfile(data);
+    setSaving(false);
+    return { error: null };
+  }
+
   async function saveGoogleEmail(googleEmail) {
     if (demoMode || !user) return { error: null };
 
@@ -72,6 +99,7 @@ export function useStudentProfile(user) {
     saving,
     error,
     refresh,
+    saveFullName,
     saveGoogleEmail,
   };
 }
