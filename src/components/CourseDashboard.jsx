@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Award, BookOpen, CalendarDays, LogOut, RefreshCw, Save, TrendingUp, Trophy, UserRound } from "lucide-react";
+import { LogOut, Pencil, RefreshCw, Save, UserRound } from "lucide-react";
 import { courseWeeks } from "../lib/coursePlan";
 import { courseActivities } from "../lib/courseActivities";
 import { getCourseProgress, getWeekAccess } from "../lib/access";
@@ -28,12 +28,14 @@ export default function CourseDashboard({
   const courseGrade = getCourseGrade(attempts, courseWeeks);
   const cumulativeScore = getCumulativeScore(attempts, courseWeeks);
   const [fullName, setFullName] = useState(profile?.full_name || "");
+  const [editingName, setEditingName] = useState(!profile?.full_name);
   const openWeeks = courseWeeks.filter(
     (week) => getWeekAccess(week, enrollment, attempts, activitySubmissions).unlocked
   );
 
   useEffect(() => {
     setFullName(profile?.full_name || "");
+    setEditingName(!profile?.full_name);
   }, [profile?.full_name]);
 
   async function saveStudentName(event) {
@@ -51,6 +53,7 @@ export default function CourseDashboard({
       return;
     }
 
+    setEditingName(false);
     onNotice("Your student name has been saved.");
   }
 
@@ -82,45 +85,11 @@ export default function CourseDashboard({
         </div>
       </section>
 
-      <section className="metric-grid" aria-label="Course progress">
-        <div className="metric">
-          <BookOpen size={20} aria-hidden="true" />
-          <span>Unlocked weeks</span>
-          <strong>
-            {openWeeks.length}/{courseWeeks.length}
-          </strong>
-        </div>
-        <div className="metric">
-          <Trophy size={20} aria-hidden="true" />
-          <span>Quizzes passed</span>
-          <strong>
-            {progress.completedCount}/{progress.totalWeeks}
-          </strong>
-        </div>
-        <div className="metric">
-          <TrendingUp size={20} aria-hidden="true" />
-          <span>Cumulative score</span>
-          <strong>
-            {cumulativeScore.correctCount}/{cumulativeScore.totalQuestions}
-          </strong>
-          <small>{cumulativeScore.percent}% - correct answers out of all course questions</small>
-        </div>
-        <div className="metric">
-          <Award size={20} aria-hidden="true" />
-          <span>Course grade</span>
-          <strong>{courseGrade.complete ? `${courseGrade.percent}%` : "In progress"}</strong>
-          <small>
-            {courseGrade.complete
-              ? `${courseGrade.emoji} ${courseGrade.label}`
-              : `${courseGrade.passedCount}/${courseGrade.totalWeeks} quizzes passed`}
-          </small>
-        </div>
-        <div className="metric">
-          <UserRound size={20} aria-hidden="true" />
-          <span>Student</span>
-          <strong>{profile?.full_name || user?.email || "Preview"}</strong>
-          <small>{profile?.full_name ? user?.email : "Add your name below"}</small>
-        </div>
+      <section className="student-summary metric" aria-label="Student identity">
+        <span className="metric-emoji" aria-hidden="true">🧑‍🎓</span>
+        <span>Student</span>
+        <strong>{profile?.full_name || user?.email || "Preview"}</strong>
+        <small>{profile?.full_name ? user?.email : "Add your name below"}</small>
       </section>
 
       {!demoMode && user ? (
@@ -133,27 +102,78 @@ export default function CourseDashboard({
             </div>
           </div>
           <form className="profile-form" onSubmit={saveStudentName}>
-            <div>
-              <label htmlFor="student-full-name">Full name</label>
-              <div className="input-row compact">
-                <UserRound size={18} aria-hidden="true" />
-                <input
-                  id="student-full-name"
-                  type="text"
-                  value={fullName}
-                  onChange={(event) => setFullName(event.target.value)}
-                  placeholder="Your full name"
-                  autoComplete="name"
-                />
+            <div className={editingName ? "profile-name-controls is-editing" : "profile-name-controls"}>
+              <div className="profile-name-field">
+                <label htmlFor="student-full-name">Full name</label>
+                <div className="input-row compact">
+                  <UserRound size={18} aria-hidden="true" />
+                  <input
+                    id="student-full-name"
+                    type="text"
+                    value={fullName}
+                    onChange={(event) => setFullName(event.target.value)}
+                    placeholder="Your full name"
+                    autoComplete="name"
+                    disabled={!editingName}
+                  />
+                </div>
+                {!editingName ? (
+                  <button
+                    type="button"
+                    className="icon-button profile-edit-button"
+                    onClick={() => setEditingName(true)}
+                    title="Edit student name"
+                    aria-label="Edit student name"
+                  >
+                    <Pencil size={17} aria-hidden="true" />
+                  </button>
+                ) : null}
               </div>
             </div>
-            <button className="secondary-button" type="submit" disabled={profileSaving}>
-              <Save size={18} aria-hidden="true" />
-              {profileSaving ? "Saving" : "Save name"}
-            </button>
+            {editingName ? (
+              <button className="secondary-button" type="submit" disabled={profileSaving}>
+                <Save size={18} aria-hidden="true" />
+                {profileSaving ? "Saving" : "Save name"}
+              </button>
+            ) : null}
           </form>
         </section>
       ) : null}
+
+      <section className="metric-grid" aria-label="Course progress">
+        <div className="metric">
+          <span className="metric-emoji" aria-hidden="true">🔓</span>
+          <span>Unlocked weeks</span>
+          <strong>
+            {openWeeks.length}/{courseWeeks.length}
+          </strong>
+        </div>
+        <div className="metric">
+          <span className="metric-emoji" aria-hidden="true">🏆</span>
+          <span>Quizzes passed</span>
+          <strong>
+            {progress.completedCount}/{progress.totalWeeks}
+          </strong>
+        </div>
+        <div className="metric">
+          <span className="metric-emoji" aria-hidden="true">📈</span>
+          <span>Cumulative score</span>
+          <strong>
+            {cumulativeScore.correctCount}/{cumulativeScore.totalQuestions}
+          </strong>
+          <small>{cumulativeScore.percent}% - correct answers out of all course questions</small>
+        </div>
+        <div className="metric">
+          <span className="metric-emoji" aria-hidden="true">🎓</span>
+          <span>Course grade</span>
+          <strong>{courseGrade.complete ? `${courseGrade.percent}%` : "In progress"}</strong>
+          <small>
+            {courseGrade.complete
+              ? `${courseGrade.emoji} ${courseGrade.label}`
+              : `${courseGrade.passedCount}/${courseGrade.totalWeeks} quizzes passed`}
+          </small>
+        </div>
+      </section>
 
       <div className="content-layout">
         <section className="weeks-grid" aria-label="Weekly lessons">

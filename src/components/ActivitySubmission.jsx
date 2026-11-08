@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BookOpen, CheckCircle2, FileUp, LoaderCircle, Mail, RefreshCw } from "lucide-react";
+import { ArrowRight, BookOpen, CheckCircle2, FileUp, LoaderCircle, Mail, RefreshCw } from "lucide-react";
 import { COURSE_ID } from "../lib/coursePlan";
 import { supabase } from "../lib/supabase";
 
@@ -140,7 +140,8 @@ export default function ActivitySubmission({
           onClick={() => onOpenActivity(week)}
         >
           <BookOpen size={17} aria-hidden="true" />
-          View activity instructions
+          <span>View activity instructions</span>
+          <ArrowRight size={17} aria-hidden="true" />
         </button>
       ) : null}
 

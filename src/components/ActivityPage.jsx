@@ -1,8 +1,13 @@
+import { useEffect } from "react";
 import { BookOpen, Download, Printer, X } from "lucide-react";
 import ActivityInstructions from "./ActivityInstructions";
 import { buildActivityDocumentHtml } from "../lib/activityDocument";
 
 export default function ActivityPage({ week, activity, onBack }) {
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [week.weekNumber]);
+
   function downloadDocument() {
     const blob = new Blob([buildActivityDocumentHtml(week, activity)], {
       type: "application/msword",

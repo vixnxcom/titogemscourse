@@ -1,4 +1,4 @@
-import { FileText, Lock, PlayCircle, Trophy } from "lucide-react";
+import { FileText, Lock, PlayCircle } from "lucide-react";
 import ActivitySubmission from "./ActivitySubmission";
 import { hasPassedWeek } from "../lib/access";
 
@@ -70,7 +70,7 @@ export default function WeekCard({
           onClick={() => onStartQuiz(week, displayedAttempt)}
           title={access.unlocked ? "Start weekly quiz" : access.reasons.join(", ")}
         >
-          <Trophy size={18} aria-hidden="true" />
+          <span className="quiz-action-emoji" aria-hidden="true">📝</span>
           <span>{passed ? "Quiz passed" : latestAttempt ? "Retake quiz" : "Take quiz"}</span>
           {(passed ? passedAttempt : latestAttempt) ? (
             <span className="quiz-score">

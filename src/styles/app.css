@@ -566,7 +566,7 @@ button:disabled {
 
 .metric-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
 }
 
@@ -589,6 +589,17 @@ button:disabled {
   font-weight: 700;
 }
 
+.metric .metric-emoji {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  color: initial;
+  font-size: 1.55rem;
+  line-height: 1;
+}
+
 .metric strong {
   grid-column: 1 / -1;
   min-width: 0;
@@ -601,6 +612,10 @@ button:disabled {
   color: #60716a;
   font-size: 0.82rem;
   font-weight: 700;
+}
+
+.student-summary {
+  margin-top: 12px;
 }
 
 .profile-panel {
@@ -643,6 +658,44 @@ button:disabled {
   gap: 10px;
 }
 
+.profile-name-controls {
+  display: block;
+  min-width: 0;
+}
+
+.profile-name-controls.is-editing {
+  display: block;
+}
+
+.profile-name-field {
+  min-width: 0;
+}
+
+.profile-edit-button {
+  width: 34px;
+  min-height: 34px;
+  padding: 0;
+  border: 0;
+  color: #89958e;
+  background: transparent;
+  box-shadow: none;
+  margin-top: 4px;
+}
+
+.profile-edit-button:hover,
+.profile-edit-button:focus-visible {
+  color: #025e1c;
+  border: 0;
+  background: rgba(2, 94, 28, 0.08);
+  box-shadow: none;
+}
+
+.profile-name-field input:disabled {
+  color: #52635c;
+  background: #fff;
+  cursor: default;
+}
+
 .profile-form label {
   display: block;
   margin-bottom: 6px;
@@ -676,7 +729,8 @@ button:disabled {
 }
 
 .week-card.is-locked {
-  background:#f4f6fd ;
+  border-color: #c5e0c8;
+  background: #eef8f0;
 }
 
 .week-card-header {
@@ -687,7 +741,7 @@ button:disabled {
 }
 
 .week-kicker {
-  color: #0de405 ;
+  color: #0f5f4d;
   font-size: 0.78rem;
   font-weight: 900;
   text-transform: uppercase;
@@ -695,8 +749,14 @@ button:disabled {
 
 .week-card h3 {
   margin: 4px 0 0;
+  color: #0f5f4d;
   font-size: 1.15rem;
   letter-spacing: 0;
+}
+
+.week-card.is-locked .week-kicker,
+.week-card.is-locked h3 {
+  color: #5e9468;
 }
 
 .week-card p {
@@ -717,13 +777,13 @@ button:disabled {
 }
 
 .status-pill.open {
-  color:#025e1c ;
-  background: #8cff88 ;
+  color: #fff;
+  background: #0f5f4d;
 }
 
 .status-pill.locked {
-  color: #818181;
-  background: #f1f1f1;
+  color: #4f7f5d;
+  background: #dcefe0;
 }
 
 .material-grid {
@@ -740,13 +800,24 @@ button:disabled {
   background: #f1f1f1;
 }
 
+.week-card.is-locked .material-button {
+  color: #527a5c;
+  border-color: #c3dfc8;
+  background: #e4f3e7;
+}
+
 .activity-panel {
   display: grid;
   gap: 10px;
   padding: 14px;
-  border: 1px solid #dfe7dc;
+  border: 1px solid #1f8a70;
   border-radius: 8px;
-  background: #f6f9f4;
+  background: #fff;
+}
+
+.week-card.is-locked .activity-panel {
+  border-color: #b8daba;
+  background: #e4f3e7;
 }
 
 .activity-heading {
@@ -776,16 +847,29 @@ button:disabled {
   gap: 8px;
   min-height: 40px;
   padding: 0 11px;
-  border: 1px solid #bad7ce;
+  border: 1px solid #025e1c;
   border-radius: 8px;
-  color: #025e1c;
-  background: #fff;
+  color: #fff;
+  background: #025e1c;
   font-size: 0.82rem;
   font-weight: 800;
 }
 
 .activity-instructions-button:hover {
-  border-color: #1f8a70;
+  border-color: #014b16;
+  background: #014b16;
+  box-shadow: 0 5px 12px rgba(2, 94, 28, 0.2);
+}
+
+.week-card.is-locked .activity-instructions-button {
+  border-color: #b8daba;
+  color: #4f7f5d;
+  background: #dcefe0;
+}
+
+.week-card.is-locked .activity-instructions-button:hover {
+  border-color: #8fbd99;
+  background: #d3ead7;
   box-shadow: 0 5px 12px rgba(31, 138, 112, 0.12);
 }
 
@@ -1183,6 +1267,23 @@ button:disabled {
   padding: 0 12px;
 }
 
+.week-card.is-locked .activity-file-picker {
+  border-color: #b8daba;
+  color: #527a5c;
+  background: #edf8ef;
+}
+
+.week-card.is-locked .activity-submit-button {
+  color: #4f7f5d;
+  border-color: #b8daba;
+  background: #dcefe0;
+  box-shadow: none;
+}
+
+.week-card.is-locked .activity-help {
+  color: #6a9273;
+}
+
 .activity-help {
   color: #60716a;
   font-size: 0.75rem;
@@ -1201,8 +1302,45 @@ button:disabled {
 .quiz-button {
   width: 100%;
   padding: 0 12px;
+  color: #0f5f4d;
+  border-color: #1f8a70;
+  background: #fff;
+  box-shadow: none;
+}
+
+.quiz-action-emoji {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.08rem;
+  line-height: 1;
+}
+
+.quiz-button:hover:not(:disabled),
+.quiz-button:focus-visible,
+.quiz-button:active:not(:disabled) {
   color: #fff;
-  background: linear-gradient(33.33deg, #025e1c 19.83%, #0de405 161.18%);
+  border-color: #0f5f4d;
+  background: #0f5f4d;
+  box-shadow: 0 5px 12px rgba(15, 95, 77, 0.2);
+}
+
+.week-card.is-locked .quiz-button {
+  color: #4f7f5d;
+  border-color: #b8daba;
+  background: #dcefe0;
+}
+
+.quiz-score {
+  color: #0f5f4d;
+  background: #e4f3e7;
+}
+
+.quiz-button:hover:not(:disabled) .quiz-score,
+.quiz-button:focus-visible .quiz-score,
+.quiz-button:active:not(:disabled) .quiz-score {
+  color: #0f5f4d;
+  background: #fff;
 }
 
 .quiz-score {
@@ -1221,7 +1359,7 @@ button:disabled {
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  color: #7c5f25;
+  color: #5e9468;
   font-size: 0.88rem;
   line-height: 1.45;
 }
@@ -1555,6 +1693,11 @@ button:disabled {
   .activity-form,
   .profile-form {
     grid-template-columns: 1fr;
+  }
+
+  .profile-edit-button {
+    width: 34px;
+    justify-self: start;
   }
 
   .modal-actions {
