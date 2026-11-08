@@ -129,7 +129,7 @@ export default function ActivitySubmission({
         <FileUp size={20} aria-hidden="true" />
         <div>
           <h4 id={`activity-title-${week.weekNumber}`}>Weekly activity</h4>
-          <p>Complete the activity outside the platform, then upload your document here.</p>
+          <p>Download and complete the activity file outside the platform, then upload your document here.</p>
         </div>
       </div>
 
